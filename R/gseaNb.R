@@ -230,25 +230,26 @@ gseaNb <- function(object = NULL,
   # plot
   ##################################################################################
   # nice title
-  niceTit <- purrr::map_chr(unique(gsdata$Description),function(x){
-    tit <- unlist(strsplit(x, split = "_"))
+  niceTit <- unique(gsdata$Description)
+  # niceTit <- purrr::map_chr(unique(gsdata$Description),function(x){
+  #   tit <- unlist(strsplit(x, split = "_"))
 
-    if(length(tit) == 1){
-      niceTit <-
-        paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
-        stringr::str_wrap(., width = termWidth)
-    }else{
-      if(rmPrefix == TRUE){
-        niceTit <-
-          paste(stringr::str_to_title(tit[2:length(tit)]), collapse = " ") %>%
-          stringr::str_wrap(., width = termWidth)
-      }else{
-        niceTit <-
-          paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
-          stringr::str_wrap(., width = termWidth)
-      }
-    }
-  })
+  #   if(length(tit) == 1){
+  #     niceTit <-
+  #       paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
+  #       stringr::str_wrap(., width = termWidth)
+  #   }else{
+  #     if(rmPrefix == TRUE){
+  #       niceTit <-
+  #         paste(stringr::str_to_title(tit[2:length(tit)]), collapse = " ") %>%
+  #         stringr::str_wrap(., width = termWidth)
+  #     }else{
+  #       niceTit <-
+  #         paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
+  #         stringr::str_wrap(., width = termWidth)
+  #     }
+  #   }
+  # })
 
   # rename term id
   if(length(geneSetID) != 1){
@@ -556,11 +557,13 @@ gseaNb <- function(object = NULL,
         "NES: ",
         round(data_ga$NES, digits = nesDigit),
         "\n",
-        "Pvalue: ",
+        # "Pvalue: ",
+        "P:",
         # round(data_ga$pvalue, digits = pDigit),
         ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
         "\n",
-        "Adjusted Pvalue: ",
+        # "Adjusted Pvalue: ",
+        "FDR:",
         # round(data_ga$p.adjust, digits = pDigit),
         ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
         sep = " "
