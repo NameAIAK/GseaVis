@@ -559,13 +559,15 @@ gseaNb <- function(object = NULL,
         "\n",
         # "Pvalue: ",
         "P:",
+        data_ga$pvalue,
         # round(data_ga$pvalue, digits = pDigit),
-        ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
+        # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
         "\n",
         # "Adjusted Pvalue: ",
         "FDR:",
+        data_ga$p.adjust, 
         # round(data_ga$p.adjust, digits = pDigit),
-        ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
+        # ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
         sep = " "
       )
 
