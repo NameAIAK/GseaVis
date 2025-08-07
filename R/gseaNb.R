@@ -157,7 +157,8 @@ gseaNb <- function(object = NULL,
                    termID.order = NULL,
                    rank.gene = NULL,
                    rank.gene.nudgey = 2,
-                   rm_ht = FALSE) {
+                   rm_ht = FALSE,
+                  group=NULL) {
   ##################################################################################
   # prepare data for plot
   ##################################################################################
@@ -1131,14 +1132,30 @@ gseaNb <- function(object = NULL,
             gglist = list(pLabelOut, pseg_ht1, prank),
             ncol = 1,
             heights = c(0.5, 0.2, 0.3)
-          )
+          )+
+  annotate(
+    "text",
+    x = c(length(object@geneList)*0.1, length(object@geneList)*0.9),    # x 位置（左/右）
+    y = c(max(object@geneList)*0.83, max(object@geneList)*0.83),  # y 位置（顶部）
+    label = group,  # 标签文字
+    size = 5,         # 字体大小
+    color = "black"
+  ) 
       }else{
         pres <-
           aplot::plot_list(
             gglist = list(pLabelOut, pseg, prank),
             ncol = 1,
             heights = c(0.5, 0.2, 0.3)
-          )
+          )+
+  annotate(
+    "text",
+    x = c(length(object@geneList)*0.1, length(object@geneList)*0.9),    # x 位置（左/右）
+    y = c(max(object@geneList)*0.83, max(object@geneList)*0.83),  # y 位置（顶部）
+    label = group,  # 标签文字
+    size = 5,         # 字体大小
+    color = "black"
+  ) 
       }
 
       # return(pres)
