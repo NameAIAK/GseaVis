@@ -87,6 +87,16 @@ globalVariables(c("xmax", "xmin", "ymax", "ymin"))
 globalVariables(c(".", "ID", "aes_", "gene_name","gseaRes", "Mean_LogFC", "fc", "pos",
                   "position","x","y","value","variable","logfc","nudge_y","vjust",
                   "pLabel","px","py","id"))
+format_scientific_strict <- function(x) {
+  x <- as.numeric(x)
+  x_char <- format(x, scientific = TRUE)
+  
+  if (nchar(x_char) <= 5) return(x_char)
+  
+  # 固定提取 "X.XXe-XX" 格式
+  formatted <- sprintf("%.2e", x)  # 2 位小数（共 3 位）
+  return(formatted)
+}
 
 # define function
 gseaNb <- function(object = NULL,
@@ -559,13 +569,13 @@ gseaNb <- function(object = NULL,
         "\n",
         # "Pvalue: ",
         "P:",
-        data_ga$pvalue,
+        format_scientific_strict(data_ga$pvalue),
         # round(data_ga$pvalue, digits = pDigit),
         # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
         "\n",
         # "Adjusted Pvalue: ",
         "FDR:",
-        data_ga$p.adjust, 
+        format_scientific_strict(data_ga$p.adjust), 
         # round(data_ga$p.adjust, digits = pDigit),
         # ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
         sep = " "
@@ -594,13 +604,13 @@ gseaNb <- function(object = NULL,
           # "Adjusted Pvalue: ",
           # "Pvalue: ",
           "P:",
-          data_ga$pvalue,
+          format_scientific_strict(data_ga$pvalue),
           # round(data_ga$pvalue, digits = pDigit),
           # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
           "\n",
           # "Adjusted Pvalue: ",
           "FDR:",
-          tmp$p.adjust
+          format_scientific_strict(tmp$p.adjust),
           # round(data_ga$p.adjust, digits = pDigit),
           # ifelse(tmp$p.adjust < 0.001,"< 0.001",round(tmp$p.adjust, digits = pDigit)),
           sep = " "
