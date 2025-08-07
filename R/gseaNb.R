@@ -587,13 +587,22 @@ gseaNb <- function(object = NULL,
           "NES: ",
           round(tmp$NES, digits = nesDigit),
           "\n",
-          "Pvalue: ",
+          # "Pvalue: ",
+          # # round(data_ga$pvalue, digits = pDigit),
+          # ifelse(tmp$pvalue < 0.001,"< 0.001",round(tmp$pvalue, digits = pDigit)),
+          # "\n",
+          # "Adjusted Pvalue: ",
+          # "Pvalue: ",
+          "P:",
+          data_ga$pvalue,
           # round(data_ga$pvalue, digits = pDigit),
-          ifelse(tmp$pvalue < 0.001,"< 0.001",round(tmp$pvalue, digits = pDigit)),
+          # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
           "\n",
-          "Adjusted Pvalue: ",
+          # "Adjusted Pvalue: ",
+          "FDR:",
+          tmp$p.adjust
           # round(data_ga$p.adjust, digits = pDigit),
-          ifelse(tmp$p.adjust < 0.001,"< 0.001",round(tmp$p.adjust, digits = pDigit)),
+          # ifelse(tmp$p.adjust < 0.001,"< 0.001",round(tmp$p.adjust, digits = pDigit)),
           sep = " "
         )
 
@@ -623,7 +632,7 @@ gseaNb <- function(object = NULL,
                           label = pLabel,
                           size = pvalSize,
                           color = pCol,
-                          fontface = "italic",
+                          # fontface = "italic",
                           hjust = pHjust)
     }else{
       if(newGsea == FALSE){
@@ -642,7 +651,7 @@ gseaNb <- function(object = NULL,
                               color = pCol,
                               fill = pFill,
                               size = pvalSize,
-                              fontface = "italic",
+                              # fontface = "italic",
                               hjust = pHjust)
       }
 
