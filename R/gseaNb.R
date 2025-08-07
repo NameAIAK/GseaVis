@@ -87,6 +87,16 @@ globalVariables(c("xmax", "xmin", "ymax", "ymin"))
 globalVariables(c(".", "ID", "aes_", "gene_name","gseaRes", "Mean_LogFC", "fc", "pos",
                   "position","x","y","value","variable","logfc","nudge_y","vjust",
                   "pLabel","px","py","id"))
+format_scientific_strict <- function(x) {
+  x <- as.numeric(x)
+  x_char <- format(x, scientific = TRUE)
+  
+  if (nchar(x_char) <= 5) return(x_char)
+  
+  # 固定提取 "X.XXe-XX" 格式
+  formatted <- sprintf("%.2e", x)  # 2 位小数（共 3 位）
+  return(formatted)
+}
 
 # define function
 gseaNb <- function(object = NULL,
@@ -147,7 +157,8 @@ gseaNb <- function(object = NULL,
                    termID.order = NULL,
                    rank.gene = NULL,
                    rank.gene.nudgey = 2,
-                   rm_ht = FALSE) {
+                   rm_ht = FALSE,
+                  group=NULL) {
   ##################################################################################
   # prepare data for plot
   ##################################################################################
@@ -230,25 +241,26 @@ gseaNb <- function(object = NULL,
   # plot
   ##################################################################################
   # nice title
-  niceTit <- purrr::map_chr(unique(gsdata$Description),function(x){
-    tit <- unlist(strsplit(x, split = "_"))
+  niceTit <- unique(gsdata$Description)
+  # niceTit <- purrr::map_chr(unique(gsdata$Description),function(x){
+  #   tit <- unlist(strsplit(x, split = "_"))
 
-    if(length(tit) == 1){
-      niceTit <-
-        paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
-        stringr::str_wrap(., width = termWidth)
-    }else{
-      if(rmPrefix == TRUE){
-        niceTit <-
-          paste(stringr::str_to_title(tit[2:length(tit)]), collapse = " ") %>%
-          stringr::str_wrap(., width = termWidth)
-      }else{
-        niceTit <-
-          paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
-          stringr::str_wrap(., width = termWidth)
-      }
-    }
-  })
+  #   if(length(tit) == 1){
+  #     niceTit <-
+  #       paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
+  #       stringr::str_wrap(., width = termWidth)
+  #   }else{
+  #     if(rmPrefix == TRUE){
+  #       niceTit <-
+  #         paste(stringr::str_to_title(tit[2:length(tit)]), collapse = " ") %>%
+  #         stringr::str_wrap(., width = termWidth)
+  #     }else{
+  #       niceTit <-
+  #         paste(stringr::str_to_title(tit[1:length(tit)]), collapse = " ") %>%
+  #         stringr::str_wrap(., width = termWidth)
+  #     }
+  #   }
+  # })
 
   # rename term id
   if(length(geneSetID) != 1){
@@ -556,13 +568,17 @@ gseaNb <- function(object = NULL,
         "NES: ",
         round(data_ga$NES, digits = nesDigit),
         "\n",
-        "Pvalue: ",
+        # "Pvalue: ",
+        "P:",
+        format_scientific_strict(data_ga$pvalue),
         # round(data_ga$pvalue, digits = pDigit),
-        ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
+        # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
         "\n",
-        "Adjusted Pvalue: ",
+        # "Adjusted Pvalue: ",
+        "FDR:",
+        format_scientific_strict(data_ga$p.adjust), 
         # round(data_ga$p.adjust, digits = pDigit),
-        ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
+        # ifelse(data_ga$p.adjust < 0.001,"< 0.001",round(data_ga$p.adjust, digits = pDigit)),
         sep = " "
       )
 
@@ -582,13 +598,22 @@ gseaNb <- function(object = NULL,
           "NES: ",
           round(tmp$NES, digits = nesDigit),
           "\n",
-          "Pvalue: ",
+          # "Pvalue: ",
+          # # round(data_ga$pvalue, digits = pDigit),
+          # ifelse(tmp$pvalue < 0.001,"< 0.001",round(tmp$pvalue, digits = pDigit)),
+          # "\n",
+          # "Adjusted Pvalue: ",
+          # "Pvalue: ",
+          "P:",
+          format_scientific_strict(data_ga$pvalue),
           # round(data_ga$pvalue, digits = pDigit),
-          ifelse(tmp$pvalue < 0.001,"< 0.001",round(tmp$pvalue, digits = pDigit)),
+          # ifelse(data_ga$pvalue < 0.001,"< 0.001",round(data_ga$pvalue, digits = pDigit)),
           "\n",
-          "Adjusted Pvalue: ",
+          # "Adjusted Pvalue: ",
+          "FDR:",
+          format_scientific_strict(tmp$p.adjust),
           # round(data_ga$p.adjust, digits = pDigit),
-          ifelse(tmp$p.adjust < 0.001,"< 0.001",round(tmp$p.adjust, digits = pDigit)),
+          # ifelse(tmp$p.adjust < 0.001,"< 0.001",round(tmp$p.adjust, digits = pDigit)),
           sep = " "
         )
 
@@ -618,7 +643,7 @@ gseaNb <- function(object = NULL,
                           label = pLabel,
                           size = pvalSize,
                           color = pCol,
-                          fontface = "italic",
+                          # fontface = "italic",
                           hjust = pHjust)
     }else{
       if(newGsea == FALSE){
@@ -637,7 +662,7 @@ gseaNb <- function(object = NULL,
                               color = pCol,
                               fill = pFill,
                               size = pvalSize,
-                              fontface = "italic",
+                              # fontface = "italic",
                               hjust = pHjust)
       }
 
@@ -1107,14 +1132,30 @@ gseaNb <- function(object = NULL,
             gglist = list(pLabelOut, pseg_ht1, prank),
             ncol = 1,
             heights = c(0.5, 0.2, 0.3)
-          )
+          )+
+  annotate(
+    "text",
+    x = c(length(object@geneList)*0.1, length(object@geneList)*0.9),    # x 位置（左/右）
+    y = c(max(object@geneList)*0.83, max(object@geneList)*0.83),  # y 位置（顶部）
+    label = group,  # 标签文字
+    size = 5,         # 字体大小
+    color = "black"
+  ) 
       }else{
         pres <-
           aplot::plot_list(
             gglist = list(pLabelOut, pseg, prank),
             ncol = 1,
             heights = c(0.5, 0.2, 0.3)
-          )
+          )+
+  annotate(
+    "text",
+    x = c(length(object@geneList)*0.1, length(object@geneList)*0.9),    # x 位置（左/右）
+    y = c(max(object@geneList)*0.83, max(object@geneList)*0.83),  # y 位置（顶部）
+    label = group,  # 标签文字
+    size = 5,         # 字体大小
+    color = "black"
+  ) 
       }
 
       # return(pres)
